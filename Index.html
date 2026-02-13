@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karta Usprawnienia - Generator</title>
+    <style>
+        :root {
+            --primary-color: #004a99;
+            --accent-color: #d35400;
+            --bg-color: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); margin: 0; padding: 20px; color: #333; }
+        
+        /* Panel sterowania */
+        .controls {
+            max-width: 900px;
+            margin: 0 auto 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-print {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Karta */
+        .card-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            min-height: 1000px; 
+        }
+
+        /* NAGŁÓWEK - Logotypy 18px */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .logos-area { display: flex; align-items: center; gap: 10px; }
+        .logo-main { max-height: 18px; width: auto; }
+        .logo-client { max-height: 18px; width: auto; border-left: 1px solid #ccc; padding-left: 10px; }
+
+        .title-area { text-align: right; }
+        h1 { margin: 0; color: var(--primary-color); font-size: 24px; text-transform: uppercase; }
+        
+        .usp-no-box {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .usp-no-box label { font-size: 12px; font-weight: bold; color: var(--accent-color); }
+        .usp-no-box input { 
+            width: 100px; 
+            border: 1px solid var(--border-color); 
+            padding: 4px; 
+            font-weight: bold; 
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 12px;
+        }
+
+        /* Siatka pól */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .full { grid-column: span 2; }
+
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            color: #777; 
+            margin-bottom: 4px; 
+        }
+        
+        input, textarea, select {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        textarea { height: 90px; resize: none; }
+
+        /* Sekcja podpisów */
+        .signature-section {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+        .sig-box { text-align: center; }
+        .sig-line { border-top: 1px solid #000; margin-top: 40px; padding-top: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+
+        /* Drukowanie */
+        @media print {
+            .controls { display: none !important; }
+            body { background: white; padding: 0; }
+            .card-container { box-shadow: none; border: none; padding: 20px; width: 100%; }
+            input, textarea, select { border: 1px solid #eee !important; }
+            .logo-main, .logo-client { max-height: 18px !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <div>
+        <label style="font-size: 12px; font-weight: bold;">Logo Klienta:</label>
+        <input type="file" id="clientLogoInput" accept="image/*" style="font-size: 12px;">
+    </div>
+    <button class="btn-print" onclick="window.print()">DRUKUJ / PDF</button>
+</div>
+
+<div class="card-container">
+    <header>
+        <div class="logos-area">
+            <img src="https://leanmedic.pl/wp-content/uploads/2025/05/Zasob-1@5x-1-scaled.png" alt="LeanMedic" class="logo-main">
+            <img id="clientPreview" src="" alt="Logo Klienta" class="logo-client" style="display:none;">
+        </div>
+        <div class="title-area">
+            <h1>Karta Usprawnienia</h1>
+            <div class="usp-no-box">
+                <label>NR:</label>
+                <input type="text" placeholder="00/2026">
+            </div>
+        </div>
+    </header>
+
+    <div class="form-grid">
+        <div class="input-group">
+            <label>Oddział / Obszar</label>
+            <input type="text">
+        </div>
+        <div class="input-group">
+            <label>Status</label>
+            <select>
+                <option>Nowe</option>
+                <option>W realizacji</option>
+                <option>Zakończone</option>
+            </select>
+        </div>
+
+        <div class="input-group full">
+            <label>Zadanie / Inicjatywa</label>
+            <input type="text" style="font-weight: bold; font-size: 15px;">
+        </div>
+
+        <div class="input-group">
+            <label>Accountable (Właściciel)</label>
+            <input type="text">
+        </div>
+        <div class="input-group">
+            <label>Responsible (Wykonawca)</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group full">
+            <label>Cel Zmiany</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group full">
+            <label>Oczekiwany Efekt</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="input-group full">
+            <label>Zadania do wykonania</label>
+            <textarea style="height: 140px;"></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Przygotował</label>
+            <input type="text">
+        </div>
+        <div class="input-group">
+            <label>Zatwierdził</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="signature-section">
+        <div class="sig-box">
+            <div class="sig-line">Podpis: Przygotował</div>
+        </div>
+        <div class="sig-box">
+            <div class="sig-line">Podpis: Zatwierdził</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('clientLogoInput');
+    const preview = document.getElementById('clientPreview');
+
+    input.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>
