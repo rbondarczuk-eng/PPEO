@@ -3,216 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karta Usprawnienia - Generator</title>
+    <title>Karta Usprawnienia LeanMedic - Full A4 Final</title>
     <style>
         :root {
-            --primary-color: #004a99;
-            --accent-color: #d35400;
-            --bg-color: #f8f9fa;
-            --border-color: #dee2e6;
+            --primary: #004a99;
+            --accent: #d35400;
+            --border: #cbd5e0;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); margin: 0; padding: 20px; color: #333; }
+        @page { size: A4; margin: 10mm; }
         
-        /* Panel sterowania */
+        body { 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+            background: #f7fafc; 
+            margin: 0; 
+            padding: 20px; 
+            color: #2d3748;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
         .controls {
-            max-width: 900px;
-            margin: 0 auto 20px;
+            width: 210mm;
+            max-width: 100%;
             background: white;
-            padding: 15px 20px;
+            padding: 10px 20px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
         }
 
         .btn-print {
-            background: #27ae60;
+            background: #2f855a;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 600;
         }
 
-        /* Karta */
         .card-container {
-            max-width: 900px;
-            margin: 0 auto;
+            width: 210mm;
+            min-height: 275mm;
             background: white;
-            padding: 30px 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-            min-height: 1000px; 
+            padding: 12mm 15mm;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        /* NAGŁÓWEK - Logotypy 18px */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+            border-bottom: 1.5px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
 
-        .logos-area { display: flex; align-items: center; gap: 10px; }
+        .logos { display: flex; align-items: center; gap: 12px; }
         .logo-main { max-height: 18px; width: auto; }
-        .logo-client { max-height: 18px; width: auto; border-left: 1px solid #ccc; padding-left: 10px; }
+        .logo-client { max-height: 18px; width: auto; border-left: 1px solid #e2e8f0; padding-left: 12px; }
 
-        .title-area { text-align: right; }
-        h1 { margin: 0; color: var(--primary-color); font-size: 24px; text-transform: uppercase; }
+        h1 { margin: 0; color: var(--primary); font-size: 18px; text-transform: uppercase; }
         
-        .usp-no-box {
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .usp-no-box label { font-size: 12px; font-weight: bold; color: var(--accent-color); }
-        .usp-no-box input { 
-            width: 100px; 
-            border: 1px solid var(--border-color); 
-            padding: 4px; 
-            font-weight: bold; 
-            text-align: center;
-            color: var(--accent-color);
-            font-size: 12px;
-        }
+        .usp-no { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+        .usp-no label { font-size: 10px; font-weight: 800; color: var(--accent); }
+        .usp-no input { width: 80px; border: none; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: var(--accent); font-size: 11px; text-align: center; }
 
-        /* Siatka pól */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .full { grid-column: span 2; }
 
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { 
-            font-size: 11px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            color: #777; 
-            margin-bottom: 4px; 
-        }
+        .field { display: flex; flex-direction: column; }
+        label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #4a5568; margin-bottom: 2px; }
         
-        input, textarea, select {
-            border: 1px solid var(--border-color);
-            padding: 8px 10px;
-            border-radius: 4px;
-            font-size: 13px;
+        input, select, textarea {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            background: #fff;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        textarea { height: 90px; resize: none; }
-
-        /* Sekcja podpisów */
-        .signature-section {
-            margin-top: 40px;
+        .raci-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
         }
-        .sig-box { text-align: center; }
-        .sig-line { border-top: 1px solid #000; margin-top: 40px; padding-top: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
 
-        /* Drukowanie */
+        .list-area { height: 50px; resize: none; }
+        .textarea-effect { height: 40px; resize: none; }
+        
+        .tasks-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        .text-tasks { flex-grow: 1; min-height: 120px; resize: none; }
+
+        .prep-appr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .textarea-sig-info { height: 75px; resize: none; }
+
+        /* PODPISY RĘCZNE */
+        .footer-sig {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .sig-group { display: flex; flex-direction: column; }
+        .sig-bar { 
+            border-bottom: 1.5px solid #2d3748; 
+            padding-bottom: 2px; 
+            font-size: 10px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            color: #1a202c;
+        }
+        .sig-manual-space { 
+            height: 70px; /* Miejsce na podpisy ręczne */
+            width: 100%;
+        }
+
         @media print {
-            .controls { display: none !important; }
             body { background: white; padding: 0; }
-            .card-container { box-shadow: none; border: none; padding: 20px; width: 100%; }
-            input, textarea, select { border: 1px solid #eee !important; }
-            .logo-main, .logo-client { max-height: 18px !important; }
+            .controls { display: none !important; }
+            .card-container { box-shadow: none; border: none; padding: 0; margin: 0; width: 100%; }
+            textarea { overflow: hidden; }
         }
     </style>
 </head>
 <body>
 
 <div class="controls">
-    <div>
-        <label style="font-size: 12px; font-weight: bold;">Logo Klienta:</label>
-        <input type="file" id="clientLogoInput" accept="image/*" style="font-size: 12px;">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <label style="font-size: 11px; font-weight: bold;">Logo klienta:</label>
+        <input type="file" id="clientLogoInput" accept="image/*" style="font-size: 11px;">
     </div>
-    <button class="btn-print" onclick="window.print()">DRUKUJ / PDF</button>
+    <button class="btn-print" onclick="window.print()">WYDRUKUJ DO PDF</button>
 </div>
 
 <div class="card-container">
     <header>
-        <div class="logos-area">
+        <div class="logos">
             <img src="https://leanmedic.pl/wp-content/uploads/2025/05/Zasob-1@5x-1-scaled.png" alt="LeanMedic" class="logo-main">
-            <img id="clientPreview" src="" alt="Logo Klienta" class="logo-client" style="display:none;">
+            <img id="clientPreview" src="" alt="" class="logo-client" style="display:none;">
         </div>
-        <div class="title-area">
+        <div style="text-align: right;">
             <h1>Karta Usprawnienia</h1>
-            <div class="usp-no-box">
+            <div class="usp-no">
                 <label>NR:</label>
                 <input type="text" placeholder="00/2026">
             </div>
         </div>
     </header>
 
-    <div class="form-grid">
-        <div class="input-group">
+    <div class="grid">
+        <div class="field">
             <label>Oddział / Obszar</label>
             <input type="text">
         </div>
-        <div class="input-group">
+        <div class="field">
             <label>Status</label>
             <select>
-                <option>Nowe</option>
+                <option>W planach</option>
                 <option>W realizacji</option>
-                <option>Zakończone</option>
+                <option>Zrealizowane</option>
+                <option>Wstrzymane</option>
             </select>
         </div>
 
-        <div class="input-group full">
-            <label>Zadanie / Inicjatywa</label>
-            <input type="text" style="font-weight: bold; font-size: 15px;">
+        <div class="field full">
+            <label>Zadanie / Nazwa Inicjatywy</label>
+            <input type="text" style="font-weight: bold; border-left: 3px solid var(--primary); font-size: 13px;">
         </div>
 
-        <div class="input-group">
-            <label>Accountable (Właściciel)</label>
-            <input type="text">
-        </div>
-        <div class="input-group">
-            <label>Responsible (Wykonawca)</label>
-            <input type="text">
+        <div class="field full raci-container">
+            <div style="display: grid; gap: 8px;">
+                <div class="field">
+                    <label>Accountable (Właściciel - 1 os.)</label>
+                    <input type="text">
+                </div>
+                <div class="field">
+                    <label>Consulted (Konsultujący - lista)</label>
+                    <textarea class="list-area"></textarea>
+                </div>
+            </div>
+            <div style="display: grid; gap: 8px;">
+                <div class="field">
+                    <label>Responsible (Wykonawca - 1 os.)</label>
+                    <input type="text">
+                </div>
+                <div class="field">
+                    <label>Informed (Poinformowani - lista)</label>
+                    <textarea class="list-area"></textarea>
+                </div>
+            </div>
         </div>
 
-        <div class="input-group full">
+        <div class="field full">
             <label>Cel Zmiany</label>
             <input type="text">
         </div>
 
-        <div class="input-group full">
-            <label>Oczekiwany Efekt</label>
-            <textarea></textarea>
+        <div class="field full">
+            <label>Oczekiwany Efekt (KPI / Wskaźniki)</label>
+            <textarea class="textarea-effect"></textarea>
         </div>
 
-        <div class="input-group full">
-            <label>Zadania do wykonania</label>
-            <textarea style="height: 140px;"></textarea>
+        <div class="field full tasks-section">
+            <label>Kluczowe kroki / Zadania do wykonania</label>
+            <textarea class="text-tasks"></textarea>
         </div>
 
-        <div class="input-group">
-            <label>Przygotował</label>
-            <input type="text">
-        </div>
-        <div class="input-group">
-            <label>Zatwierdził</label>
-            <input type="text">
+        <div class="field full prep-appr-grid">
+            <div class="field">
+                <label>Przygotował (Lista osób/stanowisk)</label>
+                <textarea class="textarea-sig-info"></textarea>
+            </div>
+            <div class="field">
+                <label>Zatwierdził (Lista osób/stanowisk)</label>
+                <textarea class="textarea-sig-info"></textarea>
+            </div>
         </div>
     </div>
 
-    <div class="signature-section">
-        <div class="sig-box">
-            <div class="sig-line">Podpis: Przygotował</div>
+    <div class="footer-sig">
+        <div class="sig-group">
+            <div class="sig-bar">Podpis: Przygotował</div>
+            <div class="sig-manual-space"></div>
         </div>
-        <div class="sig-box">
-            <div class="sig-line">Podpis: Zatwierdził</div>
+        <div class="sig-group">
+            <div class="sig-bar">Podpis: Zatwierdził</div>
+            <div class="sig-manual-space"></div>
         </div>
     </div>
 </div>
