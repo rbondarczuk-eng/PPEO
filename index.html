@@ -63,13 +63,34 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1.5px solid var(--primary);
-            padding-bottom: 8px;
+            padding-bottom: 10px;
             margin-bottom: 12px;
         }
 
-        .logos { display: flex; align-items: center; gap: 12px; }
-        .logo-main { max-height: 18px; width: auto; }
-        .logo-client { max-height: 18px; width: auto; border-left: 1px solid #e2e8f0; padding-left: 12px; }
+        /* Sekcja logotypów z balansem wizualnym */
+        .logos { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            height: 50px; /* Stała wysokość kontenera na loga */
+        }
+
+        /* Logo Lean Medic - powrót do mniejszej skali jako kontekst */
+        .logo-main { 
+            max-height: 18px; 
+            width: auto; 
+            object-fit: contain; 
+        }
+
+        /* Logo Klienta - większa elastyczność i lepsza widoczność */
+        .logo-client { 
+            max-height: 45px; /* Wyższe niż LM, aby było lepiej widoczne */
+            max-width: 160px; /* Ograniczenie szerokości dla logo panoramicznych */
+            width: auto; 
+            border-left: 1.5px solid #e2e8f0; 
+            padding-left: 15px; 
+            object-fit: contain; /* Kluczowe: logo dopasuje się do ramki bez deformacji */
+        }
 
         h1 { margin: 0; color: var(--primary); font-size: 18px; text-transform: uppercase; }
         
@@ -94,7 +115,7 @@
         }
 
         textarea {
-            overflow: hidden; /* Ukrywa pasek przewijania przy auto-resize */
+            overflow: hidden;
             resize: none;
         }
 
@@ -127,7 +148,6 @@
         }
         .textarea-sig-info { min-height: 75px; }
 
-        /* PODPISY RĘCZNE */
         .footer-sig {
             margin-top: 25px;
             display: grid;
@@ -160,7 +180,7 @@
 
 <div class="controls">
     <div style="display: flex; gap: 15px; align-items: center;">
-        <label style="font-size: 11px; font-weight: bold;">Logo klienta:</label>
+        <label style="font-size: 11px; font-weight: bold;">Wgraj Logo Klienta:</label>
         <input type="file" id="clientLogoInput" accept="image/*" style="font-size: 11px;">
     </div>
     <button class="btn-print" onclick="window.print()">WYDRUKUJ DO PDF</button>
@@ -169,7 +189,9 @@
 <div class="card-container">
     <header>
         <div class="logos">
+            <!-- Logo Lean Medic (18px wysokości) -->
             <img src="https://leanmedic.pl/wp-content/uploads/2025/05/Zasob-1@5x-1-scaled.png" alt="LeanMedic" class="logo-main">
+            <!-- Logo Klienta (dynamiczne dopasowanie do 45px wysokości) -->
             <img id="clientPreview" src="" alt="" class="logo-client" style="display:none;">
         </div>
         <div style="text-align: right;">
@@ -264,7 +286,6 @@
 </div>
 
 <script>
-    // Obsługa logo klienta
     const input = document.getElementById('clientLogoInput');
     const preview = document.getElementById('clientPreview');
 
@@ -280,9 +301,7 @@
         }
     });
 
-    // Funkcja automatycznego rozszerzania pól tekstowych
     const textareas = document.querySelectorAll('.auto-expand');
-    
     textareas.forEach(textarea => {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
