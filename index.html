@@ -93,6 +93,11 @@
             box-sizing: border-box;
         }
 
+        textarea {
+            overflow: hidden; /* Ukrywa pasek przewijania przy auto-resize */
+            resize: none;
+        }
+
         .raci-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -103,8 +108,8 @@
             border: 1px solid #e2e8f0;
         }
 
-        .list-area { height: 50px; resize: none; }
-        .textarea-effect { height: 40px; resize: none; }
+        .list-area { min-height: 50px; }
+        .textarea-effect { min-height: 40px; }
         
         .tasks-section {
             flex-grow: 1;
@@ -112,7 +117,7 @@
             flex-direction: column;
             margin-top: 10px;
         }
-        .text-tasks { flex-grow: 1; min-height: 120px; resize: none; }
+        .text-tasks { flex-grow: 1; min-height: 120px; }
 
         .prep-appr-grid {
             display: grid;
@@ -120,7 +125,7 @@
             gap: 12px;
             margin-top: 10px;
         }
-        .textarea-sig-info { height: 75px; resize: none; }
+        .textarea-sig-info { min-height: 75px; }
 
         /* PODPISY RĘCZNE */
         .footer-sig {
@@ -139,7 +144,7 @@
             color: #1a202c;
         }
         .sig-manual-space { 
-            height: 70px; /* Miejsce na podpisy ręczne */
+            height: 70px; 
             width: 100%;
         }
 
@@ -147,7 +152,7 @@
             body { background: white; padding: 0; }
             .controls { display: none !important; }
             .card-container { box-shadow: none; border: none; padding: 0; margin: 0; width: 100%; }
-            textarea { overflow: hidden; }
+            textarea { height: auto !important; }
         }
     </style>
 </head>
@@ -204,7 +209,7 @@
                 </div>
                 <div class="field">
                     <label>Consulted (Konsultujący - lista)</label>
-                    <textarea class="list-area"></textarea>
+                    <textarea class="list-area auto-expand"></textarea>
                 </div>
             </div>
             <div style="display: grid; gap: 8px;">
@@ -214,7 +219,7 @@
                 </div>
                 <div class="field">
                     <label>Informed (Poinformowani - lista)</label>
-                    <textarea class="list-area"></textarea>
+                    <textarea class="list-area auto-expand"></textarea>
                 </div>
             </div>
         </div>
@@ -226,22 +231,22 @@
 
         <div class="field full">
             <label>Oczekiwany Efekt (KPI / Wskaźniki)</label>
-            <textarea class="textarea-effect"></textarea>
+            <textarea class="textarea-effect auto-expand"></textarea>
         </div>
 
         <div class="field full tasks-section">
             <label>Kluczowe kroki / Zadania do wykonania</label>
-            <textarea class="text-tasks"></textarea>
+            <textarea class="text-tasks auto-expand"></textarea>
         </div>
 
         <div class="field full prep-appr-grid">
             <div class="field">
                 <label>Przygotował (Lista osób/stanowisk)</label>
-                <textarea class="textarea-sig-info"></textarea>
+                <textarea class="textarea-sig-info auto-expand"></textarea>
             </div>
             <div class="field">
                 <label>Zatwierdził (Lista osób/stanowisk)</label>
-                <textarea class="textarea-sig-info"></textarea>
+                <textarea class="textarea-sig-info auto-expand"></textarea>
             </div>
         </div>
     </div>
@@ -259,6 +264,7 @@
 </div>
 
 <script>
+    // Obsługa logo klienta
     const input = document.getElementById('clientLogoInput');
     const preview = document.getElementById('clientPreview');
 
@@ -272,6 +278,16 @@
             }
             reader.readAsDataURL(file);
         }
+    });
+
+    // Funkcja automatycznego rozszerzania pól tekstowych
+    const textareas = document.querySelectorAll('.auto-expand');
+    
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     });
 </script>
 
