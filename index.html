@@ -11,7 +11,10 @@
             --border: #cbd5e0;
         }
 
-        @page { size: A4; margin: 10mm; }
+        @page { 
+            size: A4; 
+            margin: 10mm; 
+        }
         
         body { 
             font-family: 'Inter', 'Segoe UI', sans-serif; 
@@ -67,29 +70,26 @@
             margin-bottom: 12px;
         }
 
-        /* Sekcja logotypów z balansem wizualnym */
         .logos { 
             display: flex; 
             align-items: center; 
             gap: 15px; 
-            height: 50px; /* Stała wysokość kontenera na loga */
+            height: 50px; 
         }
 
-        /* Logo Lean Medic - powrót do mniejszej skali jako kontekst */
         .logo-main { 
             max-height: 18px; 
             width: auto; 
             object-fit: contain; 
         }
 
-        /* Logo Klienta - większa elastyczność i lepsza widoczność */
         .logo-client { 
-            max-height: 45px; /* Wyższe niż LM, aby było lepiej widoczne */
-            max-width: 160px; /* Ograniczenie szerokości dla logo panoramicznych */
+            max-height: 45px; 
+            max-width: 160px; 
             width: auto; 
             border-left: 1.5px solid #e2e8f0; 
             padding-left: 15px; 
-            object-fit: contain; /* Kluczowe: logo dopasuje się do ramki bez deformacji */
+            object-fit: contain; 
         }
 
         h1 { margin: 0; color: var(--primary); font-size: 18px; text-transform: uppercase; }
@@ -112,11 +112,13 @@
             background: #fff;
             width: 100%;
             box-sizing: border-box;
+            font-family: inherit;
         }
 
         textarea {
             overflow: hidden;
             resize: none;
+            display: block;
         }
 
         .raci-container {
@@ -138,7 +140,10 @@
             flex-direction: column;
             margin-top: 10px;
         }
-        .text-tasks { flex-grow: 1; min-height: 120px; }
+        .text-tasks { 
+            flex-grow: 1; 
+            min-height: 120px; 
+        }
 
         .prep-appr-grid {
             display: grid;
@@ -171,8 +176,22 @@
         @media print {
             body { background: white; padding: 0; }
             .controls { display: none !important; }
-            .card-container { box-shadow: none; border: none; padding: 0; margin: 0; width: 100%; }
-            textarea { height: auto !important; }
+            .card-container { 
+                box-shadow: none; 
+                border: none; 
+                padding: 0; 
+                margin: 0; 
+                width: 100%; 
+                min-height: initial;
+            }
+            /* Usuwamy wymuszone height: auto, pozwalamy JS kontrolować wysokość */
+            textarea { 
+                border: 1px solid #eee !important;
+                overflow: visible !important;
+            }
+            .tasks-section {
+                flex-grow: 0; /* Zapobiega sztucznemu rozciąganiu w druku jeśli treść jest krótka */
+            }
         }
     </style>
 </head>
@@ -183,15 +202,13 @@
         <label style="font-size: 11px; font-weight: bold;">Wgraj Logo Klienta:</label>
         <input type="file" id="clientLogoInput" accept="image/*" style="font-size: 11px;">
     </div>
-    <button class="btn-print" onclick="window.print()">WYDRUKUJ DO PDF</button>
+    <button class="btn-print" onclick="prepareAndPrint()">WYDRUKUJ DO PDF</button>
 </div>
 
 <div class="card-container">
     <header>
         <div class="logos">
-            <!-- Logo Lean Medic (18px wysokości) -->
             <img src="https://leanmedic.pl/wp-content/uploads/2025/05/Zasob-1@5x-1-scaled.png" alt="LeanMedic" class="logo-main">
-            <!-- Logo Klienta (dynamiczne dopasowanie do 45px wysokości) -->
             <img id="clientPreview" src="" alt="" class="logo-client" style="display:none;">
         </div>
         <div style="text-align: right;">
@@ -289,6 +306,7 @@
     const input = document.getElementById('clientLogoInput');
     const preview = document.getElementById('clientPreview');
 
+    // Obsługa logo
     input.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
@@ -301,13 +319,38 @@
         }
     });
 
+    // Funkcja dostosowująca wysokość pojedynczego pola
+    function adjustHeight(el) {
+        el.style.height = 'auto';
+        el.style.height = (el.scrollHeight + 2) + 'px';
+    }
+
+    // Funkcja dostosowująca wszystkie pola na raz
+    function adjustAllTextareas() {
+        document.querySelectorAll('textarea.auto-expand').forEach(textarea => {
+            adjustHeight(textarea);
+        });
+    }
+
+    // Inicjalizacja nasłuchiwania zmian
     const textareas = document.querySelectorAll('.auto-expand');
     textareas.forEach(textarea => {
         textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            adjustHeight(this);
         });
     });
+
+    // Funkcja wywoływana przed drukiem
+    function prepareAndPrint() {
+        adjustAllTextareas();
+        // Krótkie opóźnienie, aby przeglądarka przeliczyła layout
+        setTimeout(() => {
+            window.print();
+        }, 100);
+    }
+
+    // Dostosowanie przy starcie strony (np. po odświeżeniu z wpisanym tekstem)
+    window.onload = adjustAllTextareas;
 </script>
 
 </body>
